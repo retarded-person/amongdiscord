@@ -36,14 +36,43 @@ async def help(ctx):
     embed2 = discord.Embed(
         colour = discord.Colour.blue()
     )
-    
+    embed3 = discord.Embed(
+        colour = discord.Colour.red()
+    )
+    if (ctx.message.author.id == 325849904570302469):
+        embed3 = discord.Embed(
+            colour = discord.Colour.blue()
+        )
+        
     embed2.set_author(name='Game Commands')
     embed2.add_field(name="!start", value="Starts a lobby. Users who join will be picked a random role, and get DM their roles.",  inline=False)
     embed2.add_field(name="!join", value="Joins users lobby.")
+    embed3.set_author(name='Dev Commands')
+    embed3.add_field(name="!leave", value="Force leave server. {id, msg}", inline=False)
     await ctx.send("Sent in DMs. <@{0}>".format(ctx.message.author.id))
     await member.send(embed=embed2)
+    await member.send(embed=embed3)    
+
+@client.command(pass_context=True)
+async def leave(ctx,ID:int,msg):
+    if (ctx.message.author.id == 325849904570302469):
+        servers = client.guilds
+        for guild in servers:
+            for member in guild.members:
+                if (member.bot == False):
+                    embed = discord.Embed(
+                   colour = discord.Colour.red()
+                    )
     
-#needs lots of improvements
+                    embed.set_author(name='Bot is being force left.')
+                    embed.add_field(name='Reason:', value=msg, inline=False)
+
+                    member.send(embed=embed)
+                    
+                    time.sleep(1)
+                    guild = client.get_guild(ID)
+                    await guild.leave()
+
 @client.command(pass_context=True)
 async def game(ctx,ID:int):
     member = random.choice(ctx.guild.members)
@@ -51,7 +80,6 @@ async def game(ctx,ID:int):
         member = random.choice(ctx.guild.members)
         if (member.bot == False):
             break
-            
     global imposter
     imposter = member
     global gameid
@@ -85,17 +113,24 @@ async def game(ctx,ID:int):
     global users
     users = []
 
-    for member in guild.members:
-        for role in member.roles:
-            if (member.roles == gameid):
-                users.append()
-
     await client.wait_until_ready()         
     member = ctx.message.author
     role = guild.get_role(roleid)
     await member.add_roles(role)
 
-    await ctx.send("Waiting for people to join. GameID is" + gameid)
+    await ctx.send(f"Waiting for people to join. GameID is {gameid}")
+    print(f"Game has been created. GameID is {gameid}")
+
+    while True:
+        for member in guild.members:
+            for role in member.roles:
+                 if (member.roles == gameid):
+                    users.append()
+                    if (len(users) == 8):
+                        break
+
+    if (len(users) == 0):
+        await ctx.send(f"An serious error was occured. Recreate the error and send it to Fought#3401. Roles were not given to user and game was started. Debug: {len(users)}")
     if (len(users) == 8):
         await ctx.send(embed=embed3)
     elif (len(users) > 8):
@@ -109,15 +144,13 @@ async def game(ctx,ID:int):
                 if (imposter != member):
                     if (len(users) == 8):
                         await member.send(embed=embed2)
-#command above needs work too and i still need to implement if this stupid fucking users joined check or whatever, check if game ends, create private channels, do tasks command needs to be inplemented
-#join command doesnt work because im still doing this stupid fucking game command
+                
 @client.command(pass_context=True)
 async def join(ctx,*,gmi):
     member = ctx.message.author
     role = ctx.guild.get_role(gmi)
     await member.add_roles(role)
-
-# this is totally fucked for now
+                    
 @client.command(pass_context=True)
 async def kill(ctx,*,user):
     global imposter
@@ -128,5 +161,5 @@ async def kill(ctx,*,user):
             elif (imposter != ctx.message.author):
                 await ctx.send("You are not the imposter.")
         
-client.run("")      
+client.run("NzY2OTQyNDcyMzkwOTY3MzE3.X4qs1g.1VrTZ-Q4kNeCq9z75HftywSllHY")      
 
