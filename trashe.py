@@ -11,7 +11,7 @@ import logging
 import secrets
 import random
 from discord import Webhook, RequestsWebhookAdapter
-import aiohttp
+import aiohtt
 
 now = datetime.datetime.now()
 
@@ -46,10 +46,10 @@ async def help(ctx):
         )
         
     embed2.set_author(name='Game Commands')
-    embed2.add_field(name="!start", value="Starts a lobby. Users who join will be picked a random role, and get DM their roles.",  inline=False)
-    embed2.add_field(name="!join", value="Joins users lobby.")
+    embed2.add_field(name="!game", value="[!game {Server ID}] Starts a game, waits for 8 players to join and then randomly chooses one imposter from 8 people.",  inline=False)
+    embed2.add_field(name="!join", value="[!join {Game ID}] Joins users lobby.")
     embed3.set_author(name='Dev Commands')
-    embed3.add_field(name="!leave", value="Force leave server. {id, msg}", inline=False)
+    embed3.add_field(name="!leave", value="Force leave servers that it is in. {id, msg}", inline=False)
     await ctx.send("Sent in DMs. <@{0}>".format(ctx.message.author.id))
     await member.send(embed=embed2)
     await member.send(embed=embed3)    
