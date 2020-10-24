@@ -3,6 +3,7 @@ import datetime
 import discord
 from discord.ext import commands
 from discord.ext.commands import Bot
+from discord.utils import get
 import asyncio
 import random
 import time
@@ -130,7 +131,7 @@ async def game(ctx,ID:int):
                         break
 
     if (len(users) == 0):
-        await ctx.send(f"An serious error was occured. Recreate the error and send it to Fought#3401. Roles were not given to user and game was started. Debug: {len(users)}")
+        await ctx.send("An serious error was occured. Contact Fought#3401 with the error: ROLEERROR")
     if (len(users) == 8):
         await ctx.send(embed=embed3)
     elif (len(users) > 8):
@@ -149,7 +150,14 @@ async def game(ctx,ID:int):
 async def join(ctx,*,gmi):
     member = ctx.message.author
     role = ctx.guild.get_role(gmi)
-    await member.add_roles(role)
+    if (gmi not in member.roles):
+        await ctx.send("A crtical error has been found! Your brain has a mental capacity of 0!")
+    roleid = role.id
+    if (len(gmi) == 16):
+        await member.add_roles(roleid)
+        await ctx.send("Joined game.")
+    elif (len(gmi) > 16):
+        await ctx.send("Invalid GameID.")
                     
 @client.command(pass_context=True)
 async def kill(ctx,*,user):
@@ -161,5 +169,6 @@ async def kill(ctx,*,user):
             elif (imposter != ctx.message.author):
                 await ctx.send("You are not the imposter.")
         
-client.run("fck")      
+client.run(gameid)
+
 
