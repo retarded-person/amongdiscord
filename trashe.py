@@ -96,7 +96,11 @@ async def game(ctx,ID:int):
     embed3 = discord.Embed(
     colour = discord.Colour.green()
     )
-    
+
+    embed4 = discord.Embed(
+    colour = discord.Colour.red()
+    )
+
     embed.set_author(name="You are the imposter.")
     embed.add_field(name="Your job is to kill everyone else before they finish all the tasks and not get voted out.", value="Game ID: " + gameid, inline=False)
         
@@ -106,6 +110,9 @@ async def game(ctx,ID:int):
     embed3.set_author(name="Bot was made by Fought#3401!")
     embed3.add_field(name="The game has started!", value="Game ID: " + gameid, inline=False)
 
+    embed4.set_author(name="Waiting for 8 players to join.")
+    embed4.add_field(name=f"Game ID: {gameid}", value = now.strftime("%Y-%m-%d %H:%M:%S"), inline=False)
+    
     guild = client.get_guild(ID)
     role = await guild.create_role(name=gameid)
     roleid = role.id
@@ -119,15 +126,15 @@ async def game(ctx,ID:int):
     role = guild.get_role(roleid)
     await member.add_roles(role)
 
-    await ctx.send(f"Waiting for people to join. GameID is {gameid}")
-    print(f"Game has been created. GameID is {gameid}")
+    await ctx.send(embed=embed4)
+    print(f"[BOT] Game has been created.")
 
     while True:
         for member in guild.members:
             for role in member.roles:
                  if (member.roles == gameid):
                     users.append()
-                    if (len(users) == 8):
+                    elif (len(users) == 8):
                         break
 
     if (len(users) == 0):
@@ -151,7 +158,7 @@ async def join(ctx,*,gmi):
     member = ctx.message.author
     role = ctx.guild.get_role(gmi)
     if (gmi not in member.roles):
-        await ctx.send("A crtical error has been found! Your brain has a mental capacity of 0!")
+        await ctx.send("A critical error has occured, you are fucking stupid!")
     roleid = role.id
     if (len(gmi) == 16):
         await member.add_roles(roleid)
@@ -169,6 +176,6 @@ async def kill(ctx,*,user):
             elif (imposter != ctx.message.author):
                 await ctx.send("You are not the imposter.")
         
-client.run(gameid)
+client.run("stop trying")
 
 
