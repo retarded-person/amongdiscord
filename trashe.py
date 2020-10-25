@@ -11,7 +11,7 @@ import logging
 import secrets
 import random
 from discord import Webhook, RequestsWebhookAdapter
-import aiohtt
+import aiohttp
 
 now = datetime.datetime.now()
 
@@ -30,7 +30,7 @@ async def on_ready():
     await client.change_presence(activity=activity)
     time.sleep(0.5)
 
-@client.command(pass_context=True)
+@client.command()
 async def help(ctx):
     member = ctx.message.author
     guild = ctx.message.guild
@@ -54,7 +54,7 @@ async def help(ctx):
     await member.send(embed=embed2)
     await member.send(embed=embed3)    
 
-@client.command(pass_context=True)
+@client.command()
 async def leave(ctx,ID:int,msg):
     if (ctx.message.author.id == 325849904570302469):
         servers = client.guilds
@@ -74,8 +74,8 @@ async def leave(ctx,ID:int,msg):
                     guild = client.get_guild(ID)
                     await guild.leave()
 
-@client.command(pass_context=True)
-async def game(ctx,ID:int):
+@client.command()
+async def game(ctx):
     member = random.choice(ctx.guild.members)
     while True:
         member = random.choice(ctx.guild.members)
@@ -113,11 +113,9 @@ async def game(ctx,ID:int):
     embed4.set_author(name="Waiting for 8 players to join.")
     embed4.add_field(name=f"Game ID: {gameid}", value = now.strftime("%Y-%m-%d %H:%M:%S"), inline=False)
     
-    guild = client.get_guild(ID)
+    guild = ctx.guild
     role = await guild.create_role(name=gameid)
     roleid = role.id
-    global server
-    server = client.get_guild(ID)
     global users
     users = []
 
@@ -129,20 +127,19 @@ async def game(ctx,ID:int):
     await ctx.send(embed=embed4)
     print(f"[BOT] Game has been created.")
 
-    while True:
-        for member in guild.members:
-            for role in member.roles:
-                 if (member.roles == gameid):
-                    users.append()
-                    elif (len(users) == 8):
-                        break
 
-    if (len(users) == 0):
-        await ctx.send("An serious error was occured. Contact Fought#3401 with the error: ROLEERROR")
+    for member in guild.members:
+        for role in member.roles:
+            if (member.roles == gameid):
+                users.append()
+            elif (len(users) == 8):
+                break
+
+    print(f"[BOT] Game ID: {gameid}")
+    print(f"[BOT] Users currently: {len(users)}")
+    
     if (len(users) == 8):
         await ctx.send(embed=embed3)
-    elif (len(users) > 8):
-        await ctx.send("need more members.")
     if (member.roles == gameid):
         if (len(users) == 8):
             await member.send(embed=embed)
@@ -153,20 +150,15 @@ async def game(ctx,ID:int):
                     if (len(users) == 8):
                         await member.send(embed=embed2)
                 
-@client.command(pass_context=True)
-async def join(ctx,*,gmi):
-    member = ctx.message.author
-    role = ctx.guild.get_role(gmi)
-    if (gmi not in member.roles):
-        await ctx.send("A critical error has occured, you are fucking stupid!")
-    roleid = role.id
-    if (len(gmi) == 16):
-        await member.add_roles(roleid)
+@client.command()
+async def join(ctx, gameid2: discord.Role):
+    if (len(gameid2.name) == 32):
+        await ctx.author.add_roles(gameid2,atomic=False)
         await ctx.send("Joined game.")
-    elif (len(gmi) > 16):
-        await ctx.send("Invalid GameID.")
+    elif (len(gameid2.name) > 32):
+        await ctx.send("Invalid. Stop trying it man!")
                     
-@client.command(pass_context=True)
+@client.command()
 async def kill(ctx,*,user):
     global imposter
     if (imposter == ctx.message.author):
@@ -176,6 +168,6 @@ async def kill(ctx,*,user):
             elif (imposter != ctx.message.author):
                 await ctx.send("You are not the imposter.")
         
-client.run("stop trying")
+client.run("NzY2OTQyNDcyMzkwOTY3MzE3.X4qs1g._MtPexzM2V7iU8zabWAyCdDjPrk")
 
 
