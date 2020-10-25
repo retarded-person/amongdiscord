@@ -13,6 +13,8 @@ import random
 from discord import Webhook, RequestsWebhookAdapter
 import aiohttp
 
+token = "your bot token"
+
 now = datetime.datetime.now()
 
 client = commands.Bot(command_prefix='!')
@@ -76,15 +78,15 @@ async def leave(ctx,ID:int,msg):
 
 @client.command()
 async def game(ctx):
+    global gameid
+    gameid = secrets.token_hex(nbytes=16)
     member = random.choice(ctx.guild.members)
     while True:
         member = random.choice(ctx.guild.members)
-        if (member.bot == False):
+        if (member.bot == False or member.roles == gameid):
             break
     global imposter
     imposter = member
-    global gameid
-    gameid = secrets.token_hex(nbytes=16)
     embed = discord.Embed(
     colour = discord.Colour.red()
     )
@@ -160,13 +162,15 @@ async def join(ctx, gameid2: discord.Role):
         await ctx.send("Invalid. Stop trying it man!")
                     
 @client.command()
-async def kill(ctx,*,user):
+async def kill(ctx,*,member: discord.Member):
     global imposter
+    global gameid
     if (imposter == ctx.message.author):
-        for member in server.members:
-            if (member.roles == gameid):
-                print("it works yayayayayayay") 
-            elif (imposter != ctx.message.author):
-                await ctx.send("You are not the imposter.")
+        await member.remove_roles(gameid)
+        print(f"{member} got killed by {ctx.message.author} Debug: {gameid}")
+    elif (imposter != ctx.message.author):
+        await ctx.send("You are not the imposter.")
         
-client.run("awfawfawf")
+client.run(token)
+
+
