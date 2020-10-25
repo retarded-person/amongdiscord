@@ -155,7 +155,8 @@ async def join(ctx, gameid2: discord.Role):
     if (len(gameid2.name) == 32):
         await ctx.author.add_roles(gameid2,atomic=False)
         await ctx.send("Joined game.")
-    elif (len(gameid2.name) > 32):
+    else:
+        print(f"User tried to gain Role: {gameid2.name}. User is {ctx.author}")
         await ctx.send("Invalid. Stop trying it man!")
                     
 @client.command()
@@ -168,6 +169,6 @@ async def kill(ctx,*,user):
             elif (imposter != ctx.message.author):
                 await ctx.send("You are not the imposter.")
         
-client.run("omg")
+client.run("awfawfawf")
 
 
