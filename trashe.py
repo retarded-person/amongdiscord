@@ -168,6 +168,6 @@ async def kill(ctx,*,user):
             elif (imposter != ctx.message.author):
                 await ctx.send("You are not the imposter.")
         
-client.run("NzY2OTQyNDcyMzkwOTY3MzE3.X4qs1g._MtPexzM2V7iU8zabWAyCdDjPrk")
+client.run("omg")
 
 
