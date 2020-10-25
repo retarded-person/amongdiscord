@@ -170,5 +170,3 @@ async def kill(ctx,*,user):
                 await ctx.send("You are not the imposter.")
         
 client.run("awfawfawf")
-
-
