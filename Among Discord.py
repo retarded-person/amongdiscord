@@ -13,8 +13,6 @@ import random
 from discord import Webhook, RequestsWebhookAdapter
 import aiohttp
 
-token = "your bot token"
-
 now = datetime.datetime.now()
 
 client = commands.Bot(command_prefix='!')
@@ -27,8 +25,8 @@ time.sleep(3)
 
 @client.event
 async def on_ready():
-    print("[BOT] Expiremental Bot is ready. Waiting for bot input. | {0}".format(now.strftime("%Y-%m-%d %H:%M:%S")))
-    activity = discord.Activity(name='Expiremental Bot | Online', type=discord.ActivityType.watching)
+    print("[BOT] Among Discord is ready. | {0}".format(now.strftime("%Y-%m-%d %H:%M:%S")))
+    activity = discord.Activity(name='Among Discord | Online', type=discord.ActivityType.watching)
     await client.change_presence(activity=activity)
     time.sleep(0.5)
 
@@ -36,25 +34,17 @@ async def on_ready():
 async def help(ctx):
     member = ctx.message.author
     guild = ctx.message.guild
-    embed2 = discord.Embed(
+    embed = discord.Embed(
         colour = discord.Colour.blue()
     )
-    embed3 = discord.Embed(
-        colour = discord.Colour.red()
-    )
-    if (ctx.message.author.id == 325849904570302469):
-        embed3 = discord.Embed(
-            colour = discord.Colour.blue()
-        )
-        
-    embed2.set_author(name='Game Commands')
-    embed2.add_field(name="!game", value="[!game {Server ID}] Starts a game, waits for 8 players to join and then randomly chooses one imposter from 8 people.",  inline=False)
-    embed2.add_field(name="!join", value="[!join {Game ID}] Joins users lobby.")
-    embed3.set_author(name='Dev Commands')
-    embed3.add_field(name="!leave", value="Force leave servers that it is in. {id, msg}", inline=False)
+
+    embed.timestamp = datetime.datetime.now()
+    embed.set_footer(text="Among Discord Help")
+    embed.set_author(name='Game Commands')
+    embed.add_field(name="!game", value="[!game] Starts a game. Waits for 8 players to join.",  inline=False)
+    embed.add_field(name="!join", value="[!join {Game ID}] Joins users game.")
     await ctx.send("Sent in DMs. <@{0}>".format(ctx.message.author.id))
-    await member.send(embed=embed2)
-    await member.send(embed=embed3)    
+    await member.send(embed=embed)
 
 @client.command()
 async def leave(ctx,ID:int,msg):
@@ -125,18 +115,9 @@ async def game(ctx):
     member = ctx.message.author
     role = guild.get_role(roleid)
     await member.add_roles(role)
-
+    users.append(ctx.author)
     await ctx.send(embed=embed4)
     print(f"[BOT] Game has been created.")
-
-
-    for member in guild.members:
-        for role in member.roles:
-            if (member.roles == gameid):
-                users.append()
-            elif (len(users) == 8):
-                break
-
     print(f"[BOT] Game ID: {gameid}")
     print(f"[BOT] Users currently: {len(users)}")
     
@@ -155,6 +136,7 @@ async def game(ctx):
 @client.command()
 async def join(ctx, gameid2: discord.Role):
     if (len(gameid2.name) == 32):
+        users.append(ctx.author)
         await ctx.author.add_roles(gameid2,atomic=False)
         await ctx.send("Joined game.")
     else:
@@ -162,15 +144,22 @@ async def join(ctx, gameid2: discord.Role):
         await ctx.send("Invalid. Stop trying it man!")
                     
 @client.command()
-async def kill(ctx,*,member: discord.Member):
+async def kill(ctx,gameid2: discord.Role,member: discord.Member):
     global imposter
-    global gameid
-    if (imposter == ctx.message.author):
-        await member.remove_roles(gameid)
+    if (member == ctx.message.author and imposter == ctx.message.author):
+        member = ctx.message.author
+        await member.send("You cant kill yourself!")
+    elif (imposter == ctx.message.author):
+        await member.remove_roles(gameid2)
         print(f"{member} got killed by {ctx.message.author} Debug: {gameid}")
+        await member.send(f"{member}, You've got killed by {ctx.message.author}")
     elif (imposter != ctx.message.author):
-        await ctx.send("You are not the imposter.")
-        
-client.run(token)
+        await member.send("You are not the imposter.")
+
+@client.command()
+async def debug(ctx):
+    print(len(users))
+      
+client.run("token")
 
 
